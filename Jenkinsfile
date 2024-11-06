@@ -115,7 +115,13 @@ pipeline {
     environment {
         ANDROID_VERSION = 33
         ADB_INSTALL_TIMEOUT = 60
+        REPO = 'hhadzimahmutovic/Catroid-Fork'
+        TOKEN = credentials('tnFcIZPzWPP6WY36hw1CEa8X4WMphVKQS2I')
+        ARTIFACT_PATH = '**/*.apk'
+        VERSION = "${env.BUILD_NUMBER}"
     }
+
+    
 
     parameters {
         string name: 'WEB_TEST_URL', defaultValue: '', description: 'When set, all the archived ' +
@@ -169,6 +175,7 @@ pipeline {
         booleanParam name: 'RTL_TESTS', defaultValue: true, description: 'Enables RTL Tests'
         booleanParam name: 'OUTGOING_NETWORK_CALL_TESTS', defaultValue: false, description: 'Enables' +
                 'start Outgoing web tests'
+		booleanParam name: 'RELEASE_APK', defaultValue: false, description: 'Enables release creation and apk upload'
     }
 
     options {
@@ -420,6 +427,36 @@ pipeline {
         changed {
             node('LimitedEmulator') {
                 notifyChat()
+            }
+        }
+
+        success {
+            stage('Release to GitHub') {
+                when {
+                    expression { params.RELEASE_APK == true }
+                }
+                agent {
+                    docker {
+                        image d.image
+                        args d.args
+                        label d.label
+                        alwaysPull true
+                    }
+                }
+                steps {
+                    script {
+                        def apkFile = findFiles(glob: '**/*.apk')[0].path
+                        sh """
+                        #!/bin/bash
+                        if [ -s "$apkFile" ]; then
+                            ./automationScripts/create_release.sh "$REPO" "$TOKEN" "$apkFile" "$VERSION"
+                        else
+                            echo "Artifact not found or empty at path: $apkFile"
+                            exit 1
+                        fi
+                        """
+                    }
+                }
             }
         }
     }
