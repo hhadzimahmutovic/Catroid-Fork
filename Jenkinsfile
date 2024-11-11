@@ -175,7 +175,8 @@ pipeline {
         booleanParam name: 'RTL_TESTS', defaultValue: true, description: 'Enables RTL Tests'
         booleanParam name: 'OUTGOING_NETWORK_CALL_TESTS', defaultValue: false, description: 'Enables' +
                 'start Outgoing web tests'
-		booleanParam name: 'RELEASE_APK', defaultValue: false, description: 'Enables release creation and apk upload'
+		booleanParam name: 'RELEASE_APK', defaultValue: true, description: 'Enables release creation '
+                + 'and apk upload'
     }
 
     options {
@@ -379,6 +380,26 @@ pipeline {
                                 }
                             }
                         }
+
+                        stage('Release to GitHub') {
+                            when {
+                                expression { params.RELEASE_APK == true }
+                            }
+                            steps {
+                                script {
+                                    def apkFile = findFiles(glob: '**/*.apk')[0].path
+                                    sh """
+                                    #!/bin/bash
+                                    if [ -s "$apkFile" ]; then
+                                        ./automationScripts/create_release.sh "$REPO" "$TOKEN" "$apkFile" "$VERSION"
+                                    else
+                                        echo "Artifact not found or empty at path: $apkFile"
+                                        exit 1
+                                    fi
+                                    """
+                                }
+                            }
+                        }
                     }
 
                     post {
@@ -427,36 +448,6 @@ pipeline {
         changed {
             node('LimitedEmulator') {
                 notifyChat()
-            }
-        }
-
-        success {
-            stage('Release to GitHub') {
-                when {
-                    expression { params.RELEASE_APK == true }
-                }
-                agent {
-                    docker {
-                        image d.image
-                        args d.args
-                        label d.label
-                        alwaysPull true
-                    }
-                }
-                steps {
-                    script {
-                        def apkFile = findFiles(glob: '**/*.apk')[0].path
-                        sh """
-                        #!/bin/bash
-                        if [ -s "$apkFile" ]; then
-                            ./automationScripts/create_release.sh "$REPO" "$TOKEN" "$apkFile" "$VERSION"
-                        else
-                            echo "Artifact not found or empty at path: $apkFile"
-                            exit 1
-                        fi
-                        """
-                    }
-                }
             }
         }
     }
