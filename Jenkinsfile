@@ -175,8 +175,7 @@ pipeline {
         booleanParam name: 'RTL_TESTS', defaultValue: true, description: 'Enables RTL Tests'
         booleanParam name: 'OUTGOING_NETWORK_CALL_TESTS', defaultValue: false, description: 'Enables' +
                 'start Outgoing web tests'
-		booleanParam name: 'RELEASE_APK', defaultValue: true, description: 'Enables release creation '
-                + 'and apk upload'
+		booleanParam name: 'RELEASE_APK', defaultValue: true, description: 'Enables release creation and apk upload'
     }
 
     options {
