@@ -387,6 +387,7 @@ pipeline {
                             steps {
                                 script {
                                     def apkFile = findFiles(glob: '**/*.apk')[0].path
+                                    sh 'chmod +x ./automationScripts/create_release.sh'
                                     sh """
                                     #!/bin/bash
                                     if [ -s "$apkFile" ]; then
