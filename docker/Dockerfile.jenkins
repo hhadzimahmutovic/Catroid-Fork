@@ -52,6 +52,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         make \
         less \
         git \
+        jq \
     && rm -rf /var/lib/apt/lists/* \
     && gem install rake \
     && gem install fastlane -NV \
