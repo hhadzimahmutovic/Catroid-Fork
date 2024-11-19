@@ -21,6 +21,7 @@ echo "Release url: $RELEASES_URL"
 echo "Upload url: $UPLOAD_URL"
 echo "Artifact: $ARTIFACT"
 echo "Version: $VERSION"
+echo "Token: $TOKEN"
 
 if [ ! -s $ARTIFACT ]; then
     echo "File does not exist or is empty"
