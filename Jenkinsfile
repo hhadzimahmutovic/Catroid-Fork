@@ -230,7 +230,7 @@ pipeline {
                                 }
                             }
                         }
-                        /*
+                        
                         stage('Build with Paintroid') {
                             when {
                                 expression {
@@ -379,7 +379,6 @@ pipeline {
                                 }
                             }
                         }
-                        */
 
                         stage('Release to GitHub') {
                             when {
