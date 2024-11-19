@@ -58,11 +58,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && gem install fastlane -NV \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget --no-check-certificate -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
-RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        openjdk-11-jdk-headless 
+RUN wget -q https://corretto.aws/downloads/latest/amazon-corretto-11-x64-linux-jdk.deb && \
+    apt-get update && \
+    apt-get install -y ./amazon-corretto-11-x64-linux-jdk.deb && \
+    rm amazon-corretto-11-x64-linux-jdk.deb
 
 # User Management
 # ---------------

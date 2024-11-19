@@ -7,7 +7,7 @@ class DockerParameters {
     def args = '--device /dev/kvm:/dev/kvm ' +
             '-m=12G '
     def label = 'LimitedEmulator'
-    def image = 'catrobat/catrobat-android:api33'
+    def image = 'catrobat/catrobat-android:test'
 }
 
 def d = new DockerParameters()
